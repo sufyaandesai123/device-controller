@@ -1,7 +1,9 @@
 /*
  * device.c - a tiny simulated device controller.
- * Reads one command per line and turns bits on/off in a fake
+ *
+ * It reads one command per line, then turns bits on or off in a fake
  * hardware register, the same way firmware controls real hardware.
+ *
  * Commands: LED ON, LED OFF, FAN ON, FAN OFF, STATUS, RESET
  */
 #include <stdio.h>
@@ -26,10 +28,19 @@ void handle(const char *cmd) {
         reg &= ~FAN_BIT;                /* clear bit 1 */
         printf("OK\n");
     } else if (strcmp(cmd, "STATUS") == 0) {
-        printf("LED=%s FAN=%s REG=0x%02X\n",
-               (reg & LED_BIT) ? "ON" : "OFF",
-               (reg & FAN_BIT) ? "ON" : "OFF",
-               reg);
+        if (reg & LED_BIT) {
+            printf("LED=ON ");
+        } else {
+            printf("LED=OFF ");
+        }
+
+        if (reg & FAN_BIT) {
+            printf("FAN=ON ");
+        } else {
+            printf("FAN=OFF ");
+        }
+
+        printf("REG=0x%02X\n", reg);
     } else if (strcmp(cmd, "RESET") == 0) {
         reg = 0;
         printf("OK\n");
